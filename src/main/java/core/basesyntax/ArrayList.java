@@ -97,9 +97,6 @@ public class ArrayList<T> implements List<T> {
         int newSize = size - 1;
         checkBound(index);
         T e = data[index];
-        if (e == null) {
-            throw new NoSuchElementException();
-        }
         if (newSize > 0) {
             System.arraycopy(data, index + 1, data, index, newSize - index);
         }
@@ -109,12 +106,11 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public T remove(T element) {
-        if (element == null) {
-            throw new NoSuchElementException();
-        }
         for (int i = 0; i < data.length; i++) {
             T e = data[i];
-            if (e != null && e.equals(element)) {
+            if (element == null && e == null) {
+                return remove(i);
+            } else if (e != null && e.equals(element)) {
                 return remove(i);
             }
         }
