@@ -1,5 +1,7 @@
 package core.basesyntax;
 
+import java.util.NoSuchElementException;
+
 public class ArrayList<T> implements List<T> {
     public static final int DEFAULT_CAPACITY = 10;
     public static final String IS_OUT_OF_BOUNDS = " is out of bounds";
@@ -49,11 +51,12 @@ public class ArrayList<T> implements List<T> {
 
     @SuppressWarnings("unchecked")
     private void ensureCapacity(int step) {
-        if (size + step <= capacity) {
+        int minCapacity = size + step;
+        if (minCapacity <= capacity) {
             return;
         }
         T[] temp = data;
-        capacity = (int) (INCREASE_FACTOR * capacity) + 1;
+        capacity = (int) (INCREASE_FACTOR * minCapacity);
         data = (T[]) new Object[capacity];
         System.arraycopy(temp, 0, data, 0, size);
     }
@@ -91,12 +94,31 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public T remove(int index) {
-        return null;
+        int newSize = size - 1;
+        checkBound(index);
+        T e = data[index];
+        if (e == null) {
+            throw new NoSuchElementException();
+        }
+        if (newSize > 0) {
+            System.arraycopy(data, index + 1, data, index, newSize - index);
+        }
+        size = newSize;
+        return e;
     }
 
     @Override
     public T remove(T element) {
-        return null;
+        if (element == null) {
+            throw new NoSuchElementException();
+        }
+        for (int i = 0; i < data.length; i++) {
+            T e = data[i];
+            if (e != null && e.equals(element)) {
+                return remove(i);
+            }
+        }
+        throw new NoSuchElementException();
     }
 
     @Override
