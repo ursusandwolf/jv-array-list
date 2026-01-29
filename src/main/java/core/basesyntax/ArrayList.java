@@ -23,36 +23,52 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public void add(T value) {
-        increaseIfNeed();
+        ensureCapacity();
         data[size] = value;
         size++;
     }
 
+    @Override
+    public void add(T value, int index) {
+        if (index == size) {
+            add(value);
+            return;
+        }
+        checkBound(index);
+        ensureCapacity();
+        System.arraycopy(data, index,
+                data, index + 1,
+                size - index);
+        data[index] = value;
+        size++;
+    }
+
+    private void ensureCapacity() {
+        ensureCapacity(1);
+    }
+
     @SuppressWarnings("unchecked")
-    private void increaseIfNeed() {
-        if (size < capacity) {
+    private void ensureCapacity(int step) {
+        if (size + step <= capacity) {
             return;
         }
         T[] temp = data;
-        capacity = (int) (INCREASE_FACTOR * capacity);
+        capacity = (int) (INCREASE_FACTOR * capacity) + 1;
         data = (T[]) new Object[capacity];
         System.arraycopy(temp, 0, data, 0, size);
     }
 
     @Override
-    public void add(T value, int index) {
-        checkBound(index);
-        increaseIfNeed();
-        System.arraycopy(data, index,
-                data, index + 1,
-                size - index);
-        data[index] = value;
-        size = size + 1;
-    }
-
-    @Override
     public void addAll(List<T> list) {
-
+        int numNew;
+        if (list == null || (numNew = list.size()) == 0) {
+            return;
+        }
+        ensureCapacity(numNew);
+        for (int i = 0; i < numNew; i++) {
+            data[size + i] = list.get(i);
+        }
+        size += numNew;
     }
 
     @Override
