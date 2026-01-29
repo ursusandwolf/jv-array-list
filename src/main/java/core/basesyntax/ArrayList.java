@@ -23,15 +23,16 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public void add(T value) {
-        if (size >= capacity) {
-            increase();
-        }
+        increaseIfNeed();
         data[size] = value;
         size++;
     }
 
     @SuppressWarnings("unchecked")
-    private void increase() {
+    private void increaseIfNeed() {
+        if (size < capacity) {
+            return;
+        }
         T[] temp = data;
         capacity = (int) (INCREASE_FACTOR * capacity);
         data = (T[]) new Object[capacity];
@@ -41,12 +42,12 @@ public class ArrayList<T> implements List<T> {
     @Override
     public void add(T value, int index) {
         checkBound(index);
-        T[] temp = (T[]) new Object[size + 1];
-        T[] leftArray = (T[]) new Object[index+1];
-        T[] newArray = (T[]) new Object[size +1];
-        System.arraycopy(data, 0, leftArray, 0, index);
-        leftArray[index] = value;
-        //System.arraycopy(data, 0, leftArray, 0, index);
+        increaseIfNeed();
+        System.arraycopy(data, index,
+                data, index + 1,
+                size - index);
+        data[index] = value;
+        size = size + 1;
     }
 
     @Override
