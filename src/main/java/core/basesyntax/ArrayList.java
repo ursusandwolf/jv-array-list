@@ -55,8 +55,9 @@ public class ArrayList<T> implements List<T> {
         if (minCapacity <= capacity) {
             return;
         }
+        capacity = (int) (INCREASE_FACTOR * capacity);
+        capacity = Math.max(capacity, minCapacity);
         T[] temp = data;
-        capacity = (int) (INCREASE_FACTOR * minCapacity);
         data = (T[]) new Object[capacity];
         System.arraycopy(temp, 0, data, 0, size);
     }
@@ -106,7 +107,7 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public T remove(T element) {
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < size; i++) {
             T e = data[i];
             if (element == null && e == null) {
                 return remove(i);
@@ -114,7 +115,7 @@ public class ArrayList<T> implements List<T> {
                 return remove(i);
             }
         }
-        throw new NoSuchElementException();
+        throw new NoSuchElementException("Element " + element + " not found in the list");
     }
 
     @Override
